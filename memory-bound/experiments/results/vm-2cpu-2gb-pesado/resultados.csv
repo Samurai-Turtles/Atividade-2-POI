@@ -1,0 +1,6 @@
+cenario,size_mb,concorrencia,duracao,req_por_s,media_s,p50_s,p90_s,p95_s,p99_s,respostas_200,outras_respostas,erros,cpu_media_pct,mem_usada_max_mb
+vm-2cpu-2gb-pesado,256,1,60s,1.8921,0.5285,0.5249,0.5388,0.5541,0.6842,114,0,0,28.6,4849
+vm-2cpu-2gb-pesado,256,4,60s,3.6665,1.0898,1.0870,1.1839,1.2131,1.2580,222,0,0,94.8,5969
+vm-2cpu-2gb-pesado,256,8,60s,3.7983,2.0929,2.1031,2.1830,2.2139,2.3510,232,0,0,95.5,7307
+vm-2cpu-2gb-pesado,256,16,60s,2.7484,5.7163,6.0313,7.4694,7.8320,8.5731,175,0,0,99.5,9494
+vm-2cpu-2gb-pesado,256,32,60s,7.5312,NaN,,,,,0,0,0,75.1,11148
