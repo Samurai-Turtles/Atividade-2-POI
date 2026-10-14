@@ -8,6 +8,7 @@ Backend simples (apenas API HTTP) com perfil **memory-bound**, desenvolvido para
 - [Por que é memory-bound](#por-que-é-memory-bound)
 - [Requisitos](#requisitos)
 - [Como rodar](#como-rodar)
+- [Docker e Makefile](#docker-e-makefile)
 - [Endpoints](#endpoints)
 - [Testando](#testando)
 - [Teste de carga](#teste-de-carga)
@@ -37,7 +38,7 @@ A cada requisição em `/memory`, o servidor:
 ## Como rodar
 
 ```bash
-cd memory-app
+cd memory-bound
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
@@ -46,6 +47,30 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
 
 - `--host 0.0.0.0` deixa a API acessível de fora da máquina (necessário na VM, junto com o redirecionamento de portas do VirtualBox).
 - `--workers` define o número de processos. Cada worker atende requisições em paralelo, então varie esse valor junto com o número de CPUs da VM.
+
+## Docker e Makefile
+
+O [Makefile](Makefile) resume os comandos (rode dentro de `memory-bound/`, ou use `make -C memory-bound <alvo>`):
+
+| Alvo | O que faz |
+|------|-----------|
+| `make install` | Cria a `.venv` e instala as dependências. |
+| `make run` | Sobe a API localmente com o uvicorn. |
+| `make docker-build` | Constrói a imagem pelo [Dockerfile](Dockerfile). |
+| `make docker-run` | Sobe o container com limites de memória e CPU. |
+| `make docker-stop` | Para o container. |
+| `make experiment` | Roda o `run_experiment.sh` (`hey`) com `MONITOR=1`. |
+| `make load` | Roda a collection do Postman via Newman. |
+| `make clean` | Remove a `.venv` e os caches. |
+
+As variáveis podem ser sobrescritas na chamada:
+
+```bash
+make docker-run MEM=2g CPUS=2 WORKERS=2 PORT=8000
+make experiment CENARIO=vm-2cpu-2gb SIZE=256 DUR=60s LEVELS="1 4 8 16 32" PASSES=3
+```
+
+`MEM` e `CPUS` limitam o container e permitem simular a configuração da VM. Com a API no Docker, o `MONITOR=1` mede CPU e memória do host inteiro, não só do container. Para medir apenas o container, use `docker stats`.
 
 ## Endpoints
 
@@ -144,7 +169,7 @@ Como coletar CPU e memória:
 - **Rodando o script dentro da VM** (contra `localhost`): use `MONITOR=1 ./experiments/run_experiment.sh ...`. O CSV ganha as colunas `cpu_media_pct` e `mem_usada_max_mb`, e os dados por segundo ficam em `<cenario>/c<N>-recursos.csv`.
 - **Rodando o `hey` no host e o app na VM:** rode `./experiments/monitor.sh recursos.csv` na VM durante o teste e guarde o arquivo junto dos resultados.
 
-Sem `MONITOR=1` (ou sem o `monitor.sh` rodando na VM), as colunas `cpu_media_pct` e `mem_usada_max_mb` ficam vazias, e sem elas não dá para saber qual recurso saturou. Rode um cenário (configuração da VM) de cada vez, usando o nome do cenário para identificar a pasta. Os resultados são ignorados pelo git (`experiments/results/`); se quiser versioná-los no repositório da atividade, remova essa linha do `.gitignore`.
+Sem `MONITOR=1` (ou sem o `monitor.sh` rodando na VM), as colunas `cpu_media_pct` e `mem_usada_max_mb` ficam vazias, e sem elas não dá para saber qual recurso saturou. Rode um cenário (configuração da VM) de cada vez, usando o nome do cenário para identificar a pasta. Os resultados ficam versionados em `experiments/results/`.
 
 ## Parâmetros para os experimentos
 
@@ -158,9 +183,11 @@ Sem `MONITOR=1` (ou sem o `monitor.sh` rodando na VM), as colunas `cpu_media_pct
 ## Estrutura do projeto
 
 ```
-memory-app/
+memory-bound/
 ├── main.py            # aplicação FastAPI
 ├── requirements.txt   # dependências
+├── Dockerfile         # imagem da API
+├── Makefile           # atalhos de execução
 ├── postman/           # collection Postman e script Newman
 ├── experiments/       # scripts do hey e de monitoramento de recursos
 ├── README.md          # este arquivo
