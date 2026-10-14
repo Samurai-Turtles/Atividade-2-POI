@@ -1,0 +1,209 @@
+{
+  "info": {
+    "name": "Memory-bound - teste de carga",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('tempo de resposta < ' + pm.collectionVariables.get('max_response_ms') + ' ms', () => pm.expect(pm.response.responseTime).to.be.below(Number(pm.collectionVariables.get('max_response_ms'))));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Leve (16 MB)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('tempo de resposta < ' + pm.collectionVariables.get('max_response_ms') + ' ms', () => pm.expect(pm.response.responseTime).to.be.below(Number(pm.collectionVariables.get('max_response_ms'))));",
+              "pm.test('corpo cont\u00e9m size_mb=16', () => pm.expect(pm.response.json().size_mb).to.eql(16));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/memory?size_mb=16&passes=1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "memory"
+          ],
+          "query": [
+            {
+              "key": "size_mb",
+              "value": "16"
+            },
+            {
+              "key": "passes",
+              "value": "1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Medio (64 MB)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('tempo de resposta < ' + pm.collectionVariables.get('max_response_ms') + ' ms', () => pm.expect(pm.response.responseTime).to.be.below(Number(pm.collectionVariables.get('max_response_ms'))));",
+              "pm.test('corpo cont\u00e9m size_mb=64', () => pm.expect(pm.response.json().size_mb).to.eql(64));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/memory?size_mb=64&passes=1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "memory"
+          ],
+          "query": [
+            {
+              "key": "size_mb",
+              "value": "64"
+            },
+            {
+              "key": "passes",
+              "value": "1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Pesado (256 MB)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('tempo de resposta < ' + pm.collectionVariables.get('max_response_ms') + ' ms', () => pm.expect(pm.response.responseTime).to.be.below(Number(pm.collectionVariables.get('max_response_ms'))));",
+              "pm.test('corpo cont\u00e9m size_mb=256', () => pm.expect(pm.response.json().size_mb).to.eql(256));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/memory?size_mb=256&passes=2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "memory"
+          ],
+          "query": [
+            {
+              "key": "size_mb",
+              "value": "256"
+            },
+            {
+              "key": "passes",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Parametrizado (variaveis do ambiente)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('tempo de resposta < ' + pm.collectionVariables.get('max_response_ms') + ' ms', () => pm.expect(pm.response.responseTime).to.be.below(Number(pm.collectionVariables.get('max_response_ms'))));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/memory?size_mb={{size_mb}}&passes={{passes}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "memory"
+          ],
+          "query": [
+            {
+              "key": "size_mb",
+              "value": "{{size_mb}}"
+            },
+            {
+              "key": "passes",
+              "value": "{{passes}}"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "size_mb",
+      "value": "64"
+    },
+    {
+      "key": "passes",
+      "value": "1"
+    },
+    {
+      "key": "max_response_ms",
+      "value": "5000"
+    }
+  ]
+}
