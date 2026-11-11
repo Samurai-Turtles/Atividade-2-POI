@@ -1,0 +1,26 @@
+services:
+  cpu-bound-app:
+    image: jwilliansl/cpu-bound-app:latest
+    container_name: cpu-bound-app
+    ports:
+      - "1601:1601"
+    environment:
+      PORT: 1601
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-1}
+    restart: unless-stopped
+
+  memory-bound:
+    image: jwilliansl/memory-bound:latest
+    container_name: memory-bound
+    ports:
+      - "1602:1602"
+    environment:
+      WORKERS: ${WORKERS:-2}
+    restart: unless-stopped
+
+  io-bound-app:
+    image: jwilliansl/io-bound-app:latest
+    container_name: io-bound-app
+    ports:
+      - "1603:1603"
+    restart: unless-stopped
