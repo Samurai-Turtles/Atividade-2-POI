@@ -11,6 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
 
-EXPOSE 8095
+EXPOSE 1603
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8095"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "1603"]
